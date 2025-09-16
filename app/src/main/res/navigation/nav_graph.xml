@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_menu">
+
+    <fragment
+    android:id="@+id/nav_menu"
+    android:name="com.ayamgorengsuharti.kasirayamgoreng.fragment.MenuFragment"
+    android:label="Daftar Menu"
+    tools:layout="@layout/fragment_menu" />
+
+    <fragment
+        android:id="@+id/nav_orders"
+        android:name="com.ayamgorengsuharti.kasirayamgoreng.fragment.OrderListFragment"
+        android:label="Daftar Order"
+        tools:layout="@layout/fragment_order_list" />
+
+    <fragment
+        android:id="@+id/nav_kategori"
+        android:name="com.ayamgorengsuharti.kasirayamgoreng.fragment.KategoriFragment"
+        android:label="Manajemen Kategori"
+        tools:layout="@layout/fragment_kategori" />
+
+    <fragment
+        android:id="@+id/nav_menu_admin"
+        android:name="com.ayamgorengsuharti.kasirayamgoreng.fragment.MenuAdminFragment"
+        android:label="Manajemen Menu"
+        tools:layout="@layout/fragment_menu_admin" />
+    <fragment
+        android:id="@+id/nav_metode_bayar"
+        android:name="com.ayamgorengsuharti.kasirayamgoreng.fragment.MetodeBayarFragment"
+        android:label="Metode Pembayaran"
+        tools:layout="@layout/fragment_metode_bayar" />
+
+</navigation>

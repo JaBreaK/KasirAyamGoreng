@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/abc_list_selector_background_transition_holo_light"> <TextView
+    android:id="@+id/tv_order_id_customer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Order #168 - Daffa"
+    android:textSize="18sp"
+    android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_order_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="• 1x Nasi Goreng\n• 2x Es Teh Manis"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/tv_order_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total: Rp 58.000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tv_order_status_bayar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="BELUM_BAYAR"
+            android:padding="4dp"
+            android:background="#FFCDD2"
+            android:textColor="#D32F2F"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tv_order_status_pesanan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PESANAN_DITERIMA"
+            android:padding="4dp"
+            android:layout_marginStart="8dp"
+            android:background="#C8E6C9"
+            android:textColor="#388E3C"
+            android:gravity="center"/>
+    </LinearLayout>
+</LinearLayout>
