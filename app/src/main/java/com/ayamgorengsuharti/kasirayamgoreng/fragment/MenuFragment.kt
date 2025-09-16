@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.ayamgorengsuharti.kasirayamgoreng.cart.CartActivity
+import com.ayamgorengsuharti.kasirayamgoreng.CartActivity
 import com.ayamgorengsuharti.kasirayamgoreng.MainViewModel
 import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.adapter.MenuAdapter

@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.models.MenuResponse
 import android.widget.Toast
-import com.ayamgorengsuharti.kasirayamgoreng.cart.CartManager
+import com.ayamgorengsuharti.kasirayamgoreng.CartManager
 //               INI PENTING VVVVVVVVVVVVVVVVVVVVVVVVVVVV
 class MenuAdapter(private var menuList: List<MenuResponse.Produk>) :
     RecyclerView.Adapter<MenuAdapter.MenuViewHolder>() { // <--- INI JUGA PENTING BANGET

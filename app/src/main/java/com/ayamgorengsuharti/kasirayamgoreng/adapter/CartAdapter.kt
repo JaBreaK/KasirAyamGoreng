@@ -4,23 +4,26 @@ package com.ayamgorengsuharti.kasirayamgoreng.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.models.CartItem
 
-// Adapter ini nerima List<CartItem>
-class CartAdapter(private var cartList: List<CartItem>) :
-    RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+// Adapter ini sekarang butuh 2 "sinyal" baru
+class CartAdapter(
+    private var cartList: List<CartItem>,
+    private val onIncrease: (CartItem) -> Unit,
+    private val onDecrease: (CartItem) -> Unit
+) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-    // Bikin ViewHolder
+    // ViewHolder-nya di-update
     inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imgItem: ImageView = itemView.findViewById(R.id.img_cart_item)
         val tvName: TextView = itemView.findViewById(R.id.tv_cart_item_name)
         val tvPrice: TextView = itemView.findViewById(R.id.tv_cart_item_price)
         val tvQuantity: TextView = itemView.findViewById(R.id.tv_cart_item_quantity)
+        val btnDecrease: Button = itemView.findViewById(R.id.btn_decrease_qty)
+        val btnIncrease: Button = itemView.findViewById(R.id.btn_increase_qty)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
@@ -34,18 +37,23 @@ class CartAdapter(private var cartList: List<CartItem>) :
 
         holder.tvName.text = item.nama_produk
         holder.tvPrice.text = "Rp ${item.harga}"
-        holder.tvQuantity.text = "x ${item.jumlah}" // Tampilin jumlah
+        holder.tvQuantity.text = item.jumlah.toString() // Tampilkan jumlah
 
-        Glide.with(holder.itemView.context)
-            .load(item.gambar_url)
-            .into(holder.imgItem)
+        // Kasih sinyal kalo tombol + diklik
+        holder.btnIncrease.setOnClickListener {
+            onIncrease(item)
+        }
+
+        // Kasih sinyal kalo tombol - diklik
+        holder.btnDecrease.setOnClickListener {
+            onDecrease(item)
+        }
     }
 
     override fun getItemCount(): Int = cartList.size
 
-    // Nanti kita pake ini buat refresh list
     fun updateData(newList: List<CartItem>) {
         cartList = newList
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Tetep pake ini buat refresh
     }
 }

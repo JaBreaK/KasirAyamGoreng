@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         // Ini biar tombol "Burger" (garis tiga) muncul di halaman ini
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_menu, R.id.nav_orders // <-- ID dari menu lo
+                R.id.nav_menu, R.id.nav_orders, R.id.nav_pos // <-- ID dari menu lo
             ), drawerLayout
         )
 

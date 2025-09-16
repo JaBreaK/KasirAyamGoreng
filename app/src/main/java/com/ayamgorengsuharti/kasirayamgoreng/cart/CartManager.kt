@@ -1,26 +1,30 @@
-// Nama file: CartManager.kt
-package com.ayamgorengsuharti.kasirayamgoreng.cart
+// File: CartManager.kt
+package com.ayamgorengsuharti.kasirayamgoreng
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.ayamgorengsuharti.kasirayamgoreng.models.CartItem
 import com.ayamgorengsuharti.kasirayamgoreng.models.MenuResponse
 
-
-// Pake 'object' biar jadi Singleton (cuma ada 1 di seluruh app)
+// Pake 'object' (Singleton)
 object CartManager {
 
-    // List buat nyimpen barang
-    val cartItems = mutableListOf<CartItem>()
+    // 1. Kita bikin list-nya pake LiveData. Ini "sumber siaran"-nya.
+    // Tipenya adalah MutableList dari CartItem, diawali list kosong
+    private val _cartItemsLiveData = MutableLiveData<List<CartItem>>(emptyList())
 
-    // Fungsi buat nambahin produk ke keranjang
+    // Ini "channel TV"-nya, yang bisa ditonton sama Fragment/Activity
+    val cartItemsLiveData: LiveData<List<CartItem>> = _cartItemsLiveData
+
+    // 2. Fungsi nambah produk (logikanya di-upgrade)
     fun addProduk(produk: MenuResponse.Produk) {
-        // Cek dulu produknya udah ada di keranjang atau belum
-        val existingItem = cartItems.find { it.id == produk.id }
+        val currentList = _cartItemsLiveData.value.orEmpty().toMutableList()
+        val existingItem = currentList.find { it.id == produk.id }
 
         if (existingItem != null) {
-            // Kalo udah ada, tambahin jumlahnya aja
             existingItem.jumlah++
         } else {
-            // Kalo belum ada, "ubah" Produk jadi CartItem
+            // Ubah Produk jadi CartItem
             val cartItem = CartItem(
                 id = produk.id,
                 nama_produk = produk.namaProduk,
@@ -29,19 +33,45 @@ object CartManager {
                 gambar_url = produk.gambarUrl,
                 kategori_id = produk.kategoriId,
                 kategori = produk.kategori,
-                jumlah = 1 // Awalnya 1
+                jumlah = 1
             )
-            cartItems.add(cartItem) // Masukin ke list
+            currentList.add(cartItem)
         }
+        // "Siarkan" list yang baru!
+        _cartItemsLiveData.value = currentList
     }
 
-    // Fungsi buat ngitung total harga
-    fun getTotalHarga(): Int {
-        return cartItems.sumOf { it.harga * it.jumlah }
+    // 3. FUNGSI BARU: Nambah Kuantitas (+)
+    fun increaseQuantity(item: CartItem) {
+        val currentList = _cartItemsLiveData.value.orEmpty().toMutableList()
+        val itemDiList = currentList.find { it.id == item.id } ?: return
+
+        itemDiList.jumlah++
+        _cartItemsLiveData.value = currentList // Siarkan lagi
     }
 
-    // Fungsi buat ngosongin keranjang (setelah checkout)
+    // 4. FUNGSI BARU: Ngurangin Kuantitas (-)
+    fun decreaseQuantity(item: CartItem) {
+        val currentList = _cartItemsLiveData.value.orEmpty().toMutableList()
+        val itemDiList = currentList.find { it.id == item.id } ?: return
+
+        if (itemDiList.jumlah > 1) {
+            // Kalo jumlah masih di atas 1, kurangin aja
+            itemDiList.jumlah--
+        } else {
+            // Kalo jumlahnya 1 terus dikurangin, hapus item-nya dari list
+            currentList.remove(itemDiList)
+        }
+        _cartItemsLiveData.value = currentList // Siarkan lagi
+    }
+
+    // 5. Helper buat ngitung subtotal (cuma harga * jumlah)
+    fun getSubtotal(): Int {
+        return _cartItemsLiveData.value.orEmpty().sumOf { it.harga * it.jumlah }
+    }
+
+    // 6. Fungsi clear (tetep perlu)
     fun clearCart() {
-        cartItems.clear()
+        _cartItemsLiveData.value = emptyList() // Siarkan list kosong
     }
 }
