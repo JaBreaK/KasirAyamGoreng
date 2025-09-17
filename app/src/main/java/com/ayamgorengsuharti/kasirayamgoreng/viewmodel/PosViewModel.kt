@@ -125,4 +125,8 @@ class PosViewModel : ViewModel() {
             }
         }
     }
+
+    fun clearCheckoutResult() {
+        _checkoutResult.value = null // Set datanya balik jadi null (netral)
+    }
 }
