@@ -14,7 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.ayamgorengsuharti.kasirayamgoreng.models.MenuResponse
-
+import com.google.android.material.appbar.MaterialToolbar
 import com.ayamgorengsuharti.kasirayamgoreng.viewmodel.AddMenuViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -53,6 +53,11 @@ class AddMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_menu)
 
+        // VVVV TAMBAHIN BLOK INI VVVV
+        // 1. Cari Toolbar baru kita
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar_add_menu)
+        // 2. Setel sebagai ActionBar RESMI
+        setSupportActionBar(toolbar)
         // Setup Appbar
         title = "Tambah Menu Baru"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

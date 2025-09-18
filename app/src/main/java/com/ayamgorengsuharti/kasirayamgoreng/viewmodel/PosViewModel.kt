@@ -1,4 +1,3 @@
-// File: viewmodel/PosViewModel.kt
 package com.ayamgorengsuharti.kasirayamgoreng.viewmodel
 
 import androidx.lifecycle.LiveData
@@ -6,31 +5,36 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ayamgorengsuharti.kasirayamgoreng.models.MenuResponse
+
 import com.ayamgorengsuharti.kasirayamgoreng.models.MetodePembayaran
 import com.ayamgorengsuharti.kasirayamgoreng.models.OrderPayload
 import com.ayamgorengsuharti.kasirayamgoreng.models.OrderResponse
+
 import com.ayamgorengsuharti.kasirayamgoreng.network.RetrofitClient
 import kotlinx.coroutines.launch
+import java.util.Locale // IMPORT INI
 
 class PosViewModel : ViewModel() {
 
     private val apiService = RetrofitClient.apiService
 
-    // --- Daftar Master & Terfilter ---
-    private val _masterMenuList = MutableLiveData<List<MenuResponse.Produk>>() // Ini nyimpen SEMUA menu
+    // Data Master (Backup)
+    private val _masterMenuList = MutableLiveData<List<MenuResponse.Produk>>()
 
-    private val _filteredMenuList = MutableLiveData<List<MenuResponse.Produk>>() // Ini yg diliatin ke user
+    // Data yang diliatin ke UI
+    private val _filteredMenuList = MutableLiveData<List<MenuResponse.Produk>>()
     val filteredMenuList: LiveData<List<MenuResponse.Produk>> = _filteredMenuList
 
-    // --- Daftar Kategori ---
-    private val _kategoriList = MutableLiveData<List<MenuResponse.Kategori>>() // Buat spinner filter
+    // Data Kategori & Metode Bayar
+    private val _kategoriList = MutableLiveData<List<MenuResponse.Kategori>>()
     val kategoriList: LiveData<List<MenuResponse.Kategori>> = _kategoriList
-
-    // --- Daftar Metode Bayar ---
     private val _metodeList = MutableLiveData<List<MetodePembayaran>>()
     val metodeList: LiveData<List<MetodePembayaran>> = _metodeList
 
-    // --- Status ---
+    // Variabel buat nyimpen kondisi filter terakhir
+    private var currentQuery: String = ""
+    private var currentCategoryId: Int = 0 // 0 = "SEMUA"
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
     private val _message = MutableLiveData<String>()
@@ -39,24 +43,28 @@ class PosViewModel : ViewModel() {
     // --- Checkout ---
     private val _checkoutResult = MutableLiveData<Result<OrderResponse>>()
     val checkoutResult: LiveData<Result<OrderResponse>> = _checkoutResult
-    // Panggil ini pas fragment dibuat
+
+    // ... (Status LiveData: isLoading, message, checkoutResult biarin aja) ...
+
+
+
     fun loadInitialData() {
-        fetchMenu() // Ambil menu
-        fetchKategori() // Ambil kategori
-        fetchMetodePembayaran() // Ambil metode bayar
+        fetchMenu()
+        fetchKategori()
+        fetchMetodePembayaran()
     }
 
     private fun fetchMenu() {
-        _isLoading.value = true
+        (isLoading as MutableLiveData).value = true
         viewModelScope.launch {
             try {
                 val menu = apiService.getAllMenu()
-                _masterMenuList.value = menu // Simpen di master
-                _filteredMenuList.value = menu // Awalnya, tampilin semua
+                _masterMenuList.value = menu
+                applyFilters() // Panggil filter (awalannya kosong, jadi nampilin semua)
             } catch (e: Exception) {
-                _message.value = "Gagal load menu: ${e.message}"
+                (message as MutableLiveData).value = "Gagal load menu: ${e.message}"
             } finally {
-                _isLoading.value = false
+                (isLoading as MutableLiveData).value = false
             }
         }
     }
@@ -64,10 +72,9 @@ class PosViewModel : ViewModel() {
     private fun fetchKategori() {
         viewModelScope.launch {
             try {
-                // Pake fungsi API yg udah kita bikin dulu
                 _kategoriList.value = apiService.getAllKategori()
             } catch (e: Exception) {
-                _message.value = "Gagal load kategori: ${e.message}"
+                (message as MutableLiveData).value = "Gagal load kategori: ${e.message}"
             }
         }
     }
@@ -82,34 +89,44 @@ class PosViewModel : ViewModel() {
         }
     }
 
-    // --- FUNGSI BARU BUAT FILTER ---
-    fun filterMenu(kategoriId: Int) {
-        // Kalo ID-nya 0 (tombol "SEMUA")
-        if (kategoriId == 0) {
+    // --- LOGIKA FILTER BARU (DIGABUNG) ---
 
-            // GANTI BARIS INI:
-            // _filteredMenuList.value = _masterMenuList.value (INI ERROR LAMA)
-
-            // JADI INI:
-            // Kalo master list-nya null, kasih list kosong aja
-            _filteredMenuList.value = _masterMenuList.value ?: emptyList()
-            return
-        }
-
-        // Kalo milih ID tertentu
-        val filtered = _masterMenuList.value?.filter { produk ->
-            produk.kategoriId == kategoriId
-        }
-
-        // GANTI BARIS INI:
-        // _filteredMenuList.value = filtered (INI ERROR DI SCREENSHOT LO)
-
-        // JADI INI:
-        // Kalo hasil filter-nya null, kasih list kosong aja
-        _filteredMenuList.value = filtered ?: emptyList()
+    // Dipanggil dari Spinner
+    fun filterByCategory(kategoriId: Int) {
+        currentCategoryId = kategoriId // Simpen kondisi baru
+        applyFilters() // Jalanin filter gabungan
     }
 
-    // Fungsi Checkout (copy dari CartViewModel, tapi data customernya kita hardcode)
+    // Dipanggil dari Search Bar
+    fun searchMenu(query: String) {
+        currentQuery = query // Simpen kondisi baru
+        applyFilters() // Jalanin filter gabungan
+    }
+
+    // INI MESIN FILTER GABUNGAN-nya
+    private fun applyFilters() {
+        var filteredList = _masterMenuList.value ?: emptyList()
+
+        // 1. Filter dulu pake Search Bar (Teks)
+        if (currentQuery.isNotBlank()) {
+            filteredList = filteredList.filter { produk ->
+                produk.namaProduk.lowercase(Locale.ROOT).contains(currentQuery.lowercase(Locale.ROOT))
+            }
+        }
+
+        // 2. Hasil filter teks, kita saring LAGI pake Kategori
+        if (currentCategoryId != 0) { // 0 artinya "SEMUA KATEGORI"
+            filteredList = filteredList.filter { produk ->
+                produk.kategoriId == currentCategoryId
+            }
+        }
+
+        // 3. Kirim hasil akhir ke UI
+        _filteredMenuList.value = filteredList
+    }
+
+
+    // --- Fungsi Checkout ---
     fun checkout(
         payload: OrderPayload // Terima payload yg udah jadi
     ) {
@@ -125,7 +142,6 @@ class PosViewModel : ViewModel() {
             }
         }
     }
-
     fun clearCheckoutResult() {
         _checkoutResult.value = null // Set datanya balik jadi null (netral)
     }

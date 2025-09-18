@@ -1,6 +1,6 @@
-// File: OrderListActivity.kt
-package com.ayamgorengsuharti.kasirayamgoreng.orderlist
+package com.ayamgorengsuharti.kasirayamgoreng
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -9,10 +9,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.adapter.OrderAdapter
-import android.content.Intent
-import com.ayamgorengsuharti.kasirayamgoreng.OrderDetailActivity
+import com.ayamgorengsuharti.kasirayamgoreng.viewmodel.OrderViewModel
 
 class OrderListActivity : AppCompatActivity() {
 

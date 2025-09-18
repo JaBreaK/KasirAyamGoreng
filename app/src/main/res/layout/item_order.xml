@@ -2,16 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_margin="8dp"
-    android:background="@drawable/abc_list_selector_background_transition_holo_light"> <TextView
+    android:background="@drawable/abc_list_selector_background_transition_holo_light">
+
+
+    <TextView
     android:id="@+id/tv_order_id_customer"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Order #168 - Daffa"
     android:textSize="18sp"
     android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_order_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        tools:text="14 Sep 2025, 11:17" />
 
     <TextView
         android:id="@+id/tv_order_items"

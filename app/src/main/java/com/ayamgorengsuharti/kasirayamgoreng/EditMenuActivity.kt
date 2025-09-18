@@ -15,7 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.ayamgorengsuharti.kasirayamgoreng.models.MenuResponse
 import com.bumptech.glide.Glide // IMPORT GLIDE
-
+import com.google.android.material.appbar.MaterialToolbar
 import com.ayamgorengsuharti.kasirayamgoreng.viewmodel.EditMenuViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -50,6 +50,13 @@ class EditMenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_menu) // Pake layout edit
+
+
+        // VVVV TAMBAHIN BLOK INI VVVV
+        // 1. Cari Toolbar baru kita
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar_edit_menu)
+        // 2. Setel sebagai ActionBar RESMI
+        setSupportActionBar(toolbar)
 
         // 1. Ambil ID menu dari Intent
         menuId = intent.getIntExtra("MENU_ID", -1)

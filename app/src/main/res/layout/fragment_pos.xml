@@ -17,6 +17,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline_split">
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view_pos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/abc_textfield_default_mtrl_alpha"
+            app:iconifiedByDefault="false"
+            app:queryHint="Cari nama menu..." />
 
         <Spinner
             android:id="@+id/spinner_kategori_filter"

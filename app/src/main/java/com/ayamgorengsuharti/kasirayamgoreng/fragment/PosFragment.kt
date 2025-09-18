@@ -34,11 +34,14 @@ import java.text.NumberFormat
 import java.util.Locale
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.appcompat.widget.SearchView
 
-class PosFragment : Fragment(R.layout.fragment_pos) {
+class PosFragment : Fragment(R.layout.fragment_pos), SearchView.OnQueryTextListener {
 
     private val viewModel: PosViewModel by viewModels()
     private val PPN_RATE = 0.11 // PPN 11%
+
+    private lateinit var searchViewPos: SearchView
 
     // --- Views ---
     // Panel Kiri
@@ -77,6 +80,7 @@ class PosFragment : Fragment(R.layout.fragment_pos) {
         // Cari Views (Panel Kiri)
         spinnerKategoriFilter = view.findViewById(R.id.spinner_kategori_filter)
         rvMenuGrid = view.findViewById(R.id.rv_menu_grid)
+        searchViewPos = view.findViewById(R.id.search_view_pos)
 
         // Cari Views (Panel Kanan)
         rvCartPos = view.findViewById(R.id.rv_cart_pos)
@@ -128,11 +132,13 @@ class PosFragment : Fragment(R.layout.fragment_pos) {
         }
 
         // Listener Filter Kategori
+
         spinnerKategoriFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (kategoriList.isNotEmpty()) {
                     val selectedKategoriId = kategoriList[position].id
-                    viewModel.filterMenu(selectedKategoriId)
+                    // PANGGIL FUNGSI BARU VM: filterByCategory
+                    viewModel.filterByCategory(selectedKategoriId)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -163,6 +169,7 @@ class PosFragment : Fragment(R.layout.fragment_pos) {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+        searchViewPos.setOnQueryTextListener(this)
     }
 
     private fun observeViewModel() {
@@ -322,5 +329,15 @@ class PosFragment : Fragment(R.layout.fragment_pos) {
                 tvKembalian.text = "Error"
             }
         }
+    }
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        // Nggak perlu ngapa2in, kita udah handle live di onQueryTextChange
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        // Tiap kali ketikan berubah, panggil fungsi searchMenu di VM
+        viewModel.searchMenu(newText.orEmpty())
+        return true
     }
 }

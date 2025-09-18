@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.ayamgorengsuharti.kasirayamgoreng.models.MetodePembayaran
 import com.ayamgorengsuharti.kasirayamgoreng.viewmodel.EditMetodeViewModel
 import com.google.android.material.textfield.TextInputEditText
-
+import com.google.android.material.appbar.MaterialToolbar
 class EditMetodeBayarActivity : AppCompatActivity() {
 
     private val viewModel: EditMetodeViewModel by viewModels()
@@ -46,6 +46,13 @@ class EditMetodeBayarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_metode_bayar)
+
+        // VVVV TAMBAHIN BLOK INI VVVV
+        // 1. Cari Toolbar baru kita
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar_edit_metode_bayar)
+        // 2. Setel sebagai ActionBar RESMI
+        setSupportActionBar(toolbar)
+
 
         // 1. Ambil DATA LAMA dari Intent
         metodeData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,219 +7,390 @@
     android:layout_height="match_parent"
     tools:context=".OrderDetailActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- App bar / toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <TextView
-            android:id="@+id/tv_detail_customer_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pelanggan:"
-            android:textSize="16sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_detail_customer_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Daffa"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_customer_label"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_detail_customer_wa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="089525141148"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_customer_name"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_detail_total_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Rp 58.000"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toTopOf="@id/tv_detail_customer_label"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_detail_status_bayar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="BELUM_BAYAR"
-            android:padding="8dp"
-            android:background="#FFCDD2"
-            android:textColor="#D32F2F"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_customer_wa"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tv_detail_status_pesanan"/>
-
-        <TextView
-            android:id="@+id/tv_detail_status_pesanan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            tools:text="PESANAN_DITERIMA"
-            android:padding="8dp"
-            android:layout_marginStart="8dp"
-            android:background="#C8E6C9"
-            android:textColor="#388E3C"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="@id/tv_detail_status_bayar"
-            app:layout_constraintStart_toEndOf="@id/tv_detail_status_bayar"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_detail_items_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Item yang Dipesan:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_status_bayar"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_order_items_detail"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_order_detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_items_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/item_order_detail"
-            tools:itemCount="3"/>
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Content with proper scrolling behavior for AppBar -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/layout_bukti_bayar"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="24dp"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/rv_order_items_detail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:padding="16dp">
 
+            <!-- Header: Data Pelanggan + Total -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DATA PELANGGAN"
+                        android:textStyle="bold"
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_detail_customer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        tools:text="Daffa"/>
+
+                    <TextView
+                        android:id="@+id/tv_detail_customer_wa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        tools:text="089525141148"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_detail_total_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Rp 58.000"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <!-- Detail Order label -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bukti Pembayaran:"
-                android:textStyle="bold" />
+                android:text="DETAIL ORDER"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"/>
 
+            <!-- Waktu Order -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Waktu Order"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=": "/>
+                <TextView
+                    android:id="@+id/tv_detail_order_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="14 Sep 2025, 11:17"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Tipe Pesanan -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Tipe Pesanan"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=": "/>
+                <TextView
+                    android:id="@+id/tv_detail_tipe_pesanan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="ONLINE"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Status bayar & pesanan -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
 
-                <Button
-                    android:id="@+id/btn_lihat_bukti"
+                <TextView
+                    android:id="@+id/tv_detail_status_bayar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Lihat Bukti Ter-upload"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    style="?attr/materialButtonOutlinedStyle" />
+                    tools:text="BELUM_BAYAR"
+                    android:padding="8dp"
+                    android:background="#FFCDD2"
+                    android:textColor="#D32F2F"
+                    android:gravity="center"/>
 
-                <Button
-                    android:id="@+id/btn_upload_bukti"
+                <TextView
+                    android:id="@+id/tv_detail_status_pesanan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Upload Bukti Baru"
-                    android:layout_marginStart="8dp" />
+                    tools:text="PESANAN_DITERIMA"
+                    android:padding="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="#C8E6C9"
+                    android:textColor="#388E3C"
+                    android:gravity="center"/>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/img_bukti_preview"
+            <!-- Alasan batal (hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layout_alasan_batal"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginTop="8dp"
-                android:background="#f0f0f0"
+                android:background="#FFEBEE"
+                android:padding="8dp"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alasan Batal:"
+                    android:textStyle="bold"
+                    android:textColor="#D32F2F"/>
+                <TextView
+                    android:id="@+id/tv_detail_keterangan_batal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Stok habis."/>
+            </LinearLayout>
+
+            <!-- Catatan pelanggan (hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layout_catatan_pelanggan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Catatan Pelanggan:"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tv_detail_customer_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Sambelnya dipisah ya."/>
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#DDD"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Item yang dipesan (RecyclerView) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ITEM YANG DIPESAN"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="0dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_order_items_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_order_detail"
+                tools:itemCount="3"/>
+
+            <!-- Bukti bayar section (hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layout_bukti_bayar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bukti Pembayaran:"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <Button
+                        android:id="@+id/btn_lihat_bukti"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Lihat Bukti Ter-upload"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        style="?attr/materialButtonOutlinedStyle" />
+
+                    <Button
+                        android:id="@+id/btn_upload_bukti"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Upload Bukti Baru"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/img_bukti_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="8dp"
+                    android:background="#f0f0f0"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Payment details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Metode Bayar"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=": "/>
+                <TextView
+                    android:id="@+id/tv_detail_payment_method"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="QRIS"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Waktu Bayar"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=": "/>
+                <TextView
+                    android:id="@+id/tv_detail_payment_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="N/A"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Update status controls -->
+            <TextView
+                android:id="@+id/label_update_bayar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Status Pembayaran:"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp" />
+
+            <Spinner
+                android:id="@+id/spinner_status_bayar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:background="@android:drawable/btn_dropdown"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <TextView
+                android:id="@+id/label_update_pesanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Status Pesanan:"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <Spinner
+                android:id="@+id/spinner_status_pesanan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:background="@android:drawable/btn_dropdown" />
+
+            <Button
+                android:id="@+id/btn_update_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Simpan Perubahan Status"
+                android:layout_marginTop="24dp" />
+
+            <!-- Progress bar (hidden by default) -->
+
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/label_update_bayar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update Status Pembayaran:"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_bukti_bayar"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Spinner
-            android:id="@+id/spinner_status_bayar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="8dp"
-            android:background="@android:drawable/btn_dropdown"
-            app:layout_constraintTop_toBottomOf="@id/label_update_bayar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/label_update_pesanan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update Status Pesanan:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/spinner_status_bayar"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Spinner
-            android:id="@+id/spinner_status_pesanan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="8dp"
-            android:background="@android:drawable/btn_dropdown"
-            app:layout_constraintTop_toBottomOf="@id/label_update_pesanan"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/btn_update_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Simpan Perubahan Status"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/spinner_status_pesanan"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.core.widget.NestedScrollView>
+    <FrameLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
 
         <ProgressBar
             android:id="@+id/progress_bar_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

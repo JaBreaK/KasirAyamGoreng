@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.OrderDetailActivity
 import com.ayamgorengsuharti.kasirayamgoreng.adapter.OrderAdapter
-import com.ayamgorengsuharti.kasirayamgoreng.orderlist.OrderViewModel
+import com.ayamgorengsuharti.kasirayamgoreng.viewmodel.OrderViewModel
+import android.view.Menu // <-- TAMBAH
+import android.view.MenuInflater // <-- TAMBAH
+import androidx.appcompat.widget.SearchView // <-- TAMBAH
 
-class OrderListFragment : Fragment(R.layout.fragment_order_list) {
+class OrderListFragment : Fragment(R.layout.fragment_order_list), SearchView.OnQueryTextListener {
 
     private lateinit var rvOrders: RecyclerView
     private lateinit var progressBar: ProgressBar
@@ -24,6 +27,7 @@ class OrderListFragment : Fragment(R.layout.fragment_order_list) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         // findViewById harus diawali view.
         rvOrders = view.findViewById(R.id.rv_orders)
@@ -66,5 +70,28 @@ class OrderListFragment : Fragment(R.layout.fragment_order_list) {
                 Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_LONG).show()
             }
         }
+    }
+    // FUNGSI BARU 1: Buat nampilin Search Bar di Appbar
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.order_search_menu, menu) // Pake file XML yg kita bikin
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as? SearchView
+
+        searchView?.isSubmitButtonEnabled = false // Nggak perlu tombol submit, kita cari live
+        searchView?.setOnQueryTextListener(this) // Sambungin listener-nya ke Fragment ini
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // FUNGSI BARU 2: Implementasi listener-nya (yang tadi kita tambahin)
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        orderViewModel.search(query.orEmpty()) // <-- TAMBAHIN "order"
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        orderViewModel.search(newText.orEmpty()) // <-- TAMBAHIN "order"
+        return true
     }
 }

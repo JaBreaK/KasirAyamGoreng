@@ -4,6 +4,7 @@ package com.ayamgorengsuharti.kasirayamgoreng
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.*
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -25,7 +26,11 @@ import android.widget.ImageView // IMPORT INI
 import android.widget.LinearLayout // IMPORT INI
 import androidx.activity.result.contract.ActivityResultContracts // IMPORT INI
 import com.bumptech.glide.Glide
+import com.google.android.material.appbar.MaterialToolbar
 
+import java.text.SimpleDateFormat
+
+import java.util.TimeZone
 
 class OrderDetailActivity : AppCompatActivity() {
 
@@ -35,18 +40,29 @@ class OrderDetailActivity : AppCompatActivity() {
     // Definisikan semua Views
     private lateinit var tvCustomerName: TextView
     private lateinit var tvCustomerWa: TextView
-    private lateinit var tvTotalPrice: TextView
+    private lateinit var tvOrderTime: TextView
+    private lateinit var tvTipePesanan: TextView
     private lateinit var tvStatusBayar: TextView
     private lateinit var tvStatusPesanan: TextView
+    private lateinit var layoutAlasanBatal: LinearLayout
+    private lateinit var tvKeteranganBatal: TextView
     private lateinit var rvItems: RecyclerView
+    private lateinit var detailAdapter: OrderDetailAdapter
+    private lateinit var tvTotalPrice: TextView
+    private lateinit var tvPaymentMethod: TextView
+    private lateinit var tvPaymentTime: TextView
+    private lateinit var layoutCatatanPelanggan: LinearLayout
+    private lateinit var tvCustomerNote: TextView
+
     private lateinit var progressBar: ProgressBar
+    private lateinit var loadingoverlay: FrameLayout
     private lateinit var spinnerStatusBayar: Spinner
     private lateinit var spinnerStatusPesanan: Spinner
     private lateinit var btnUpdateStatus: Button
 
-    private lateinit var detailAdapter: OrderDetailAdapter
-    private val listStatusBayar = listOf("BELUM_BAYAR", "MENUNGGU_KONFIRMASI", "LUNAS", "BATAL")
-    private val listStatusPesanan = listOf("PESANAN_DITERIMA", "SEDANG_DIMASAK", "SIAP_DIAMBIL", "SELESAI")
+
+    private val listStatusBayar = listOf("LUNAS", "BATAL")
+    private val listStatusPesanan = listOf("SEDANG_DIMASAK", "SIAP_DIAMBIL", "SELESAI")
 
     // VVVV TAMBAH VIEWS BARU VVVV
     private lateinit var layoutBuktiBayar: LinearLayout
@@ -56,6 +72,7 @@ class OrderDetailActivity : AppCompatActivity() {
 
     // Variabel buat nampung URL bukti yg ada
     private var currentBuktiUrl: String? = null
+
 
     // Launcher buat milih gambar bukti (COPY-PASTE DARI ACTIVITY LAIN)
     private val buktiPickerLauncher = registerForActivityResult(
@@ -71,6 +88,12 @@ class OrderDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_detail)
 
+        // VVVV TAMBAHIN BLOK INI VVVV
+        // 1. Cari Toolbar baru kita
+        val toolbar: MaterialToolbar = findViewById(R.id.toolbar_order_detail)
+        // 2. Setel sebagai ActionBar RESMI
+        setSupportActionBar(toolbar)
+
         // Ambil ID dari Intent
         orderId = intent.getIntExtra("ORDER_ID", -1)
         if (orderId == -1) {
@@ -83,21 +106,7 @@ class OrderDetailActivity : AppCompatActivity() {
         title = "Detail Order #$orderId"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Hubungin Views
-        tvCustomerName = findViewById(R.id.tv_detail_customer_name)
-        tvCustomerWa = findViewById(R.id.tv_detail_customer_wa)
-        tvTotalPrice = findViewById(R.id.tv_detail_total_price)
-        tvStatusBayar = findViewById(R.id.tv_detail_status_bayar)
-        tvStatusPesanan = findViewById(R.id.tv_detail_status_pesanan)
-        rvItems = findViewById(R.id.rv_order_items_detail)
-        progressBar = findViewById(R.id.progress_bar_detail)
-        spinnerStatusBayar = findViewById(R.id.spinner_status_bayar)
-        spinnerStatusPesanan = findViewById(R.id.spinner_status_pesanan)
-        btnUpdateStatus = findViewById(R.id.btn_update_status)
-        layoutBuktiBayar = findViewById(R.id.layout_bukti_bayar)
-        btnLihatBukti = findViewById(R.id.btn_lihat_bukti)
-        btnUploadBukti = findViewById(R.id.btn_upload_bukti)
-        imgBuktiPreview = findViewById(R.id.img_bukti_preview)
+        findViewsById()
 
         setupRecyclerView()
         setupSpinners()
@@ -107,10 +116,37 @@ class OrderDetailActivity : AppCompatActivity() {
         // Panggil API
         viewModel.fetchOrderDetail(orderId)
     }
+    // Fungsi baru biar onCreate rapi
+    private fun findViewsById() {
+        tvCustomerName = findViewById(R.id.tv_detail_customer_name)
+        tvCustomerWa = findViewById(R.id.tv_detail_customer_wa)
+        tvOrderTime = findViewById(R.id.tv_detail_order_time)
+        tvTipePesanan = findViewById(R.id.tv_detail_tipe_pesanan)
+        tvStatusBayar = findViewById(R.id.tv_detail_status_bayar)
+        tvStatusPesanan = findViewById(R.id.tv_detail_status_pesanan)
+        layoutAlasanBatal = findViewById(R.id.layout_alasan_batal)
+        tvKeteranganBatal = findViewById(R.id.tv_detail_keterangan_batal)
+        rvItems = findViewById(R.id.rv_order_items_detail)
+        tvTotalPrice = findViewById(R.id.tv_detail_total_price)
+        tvPaymentMethod = findViewById(R.id.tv_detail_payment_method)
+        tvPaymentTime = findViewById(R.id.tv_detail_payment_time)
+        layoutCatatanPelanggan = findViewById(R.id.layout_catatan_pelanggan)
+        tvCustomerNote = findViewById(R.id.tv_detail_customer_note)
+        layoutBuktiBayar = findViewById(R.id.layout_bukti_bayar)
+        btnLihatBukti = findViewById(R.id.btn_lihat_bukti)
+        btnUploadBukti = findViewById(R.id.btn_upload_bukti)
+        imgBuktiPreview = findViewById(R.id.img_bukti_preview)
+        spinnerStatusBayar = findViewById(R.id.spinner_status_bayar)
+        spinnerStatusPesanan = findViewById(R.id.spinner_status_pesanan)
+        btnUpdateStatus = findViewById(R.id.btn_update_status)
+        progressBar = findViewById(R.id.progress_bar_detail)
+        loadingoverlay = findViewById(R.id.loading_overlay)
+    }
 
     private fun setupRecyclerView() {
         detailAdapter = OrderDetailAdapter(emptyList())
         rvItems.layoutManager = LinearLayoutManager(this)
+        rvItems.isNestedScrollingEnabled = false
         rvItems.adapter = detailAdapter
     }
 
@@ -155,6 +191,7 @@ class OrderDetailActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.isLoading.observe(this) {
             progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            loadingoverlay.visibility = if (it) View.VISIBLE else View.GONE
         }
 
         viewModel.errorMessage.observe(this) {
@@ -178,7 +215,7 @@ class OrderDetailActivity : AppCompatActivity() {
             result.onSuccess {
                 Toast.makeText(this, "Upload bukti berhasil!", Toast.LENGTH_SHORT).show()
                 // ViewModel otomatis nge-refresh, jadi biarin aja
-                imgBuktiPreview.visibility = View.GONE // Sembunyiin preview lama
+
             }.onFailure {
                 Toast.makeText(this, "Upload GAGAL: ${it.message}", Toast.LENGTH_LONG).show()
             }
@@ -187,21 +224,40 @@ class OrderDetailActivity : AppCompatActivity() {
 
     private fun populateUi(order: Order) {
         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        formatter.maximumFractionDigits = 0
 
         tvCustomerName.text = order.nama_pelanggan ?: "N/A"
-        tvCustomerWa.text = order.tipe_pesanan // Kita tampilkan tipe pesanan di sini
+        tvCustomerWa.text = order.nomor_wa ?: "N/A"
+        tvTipePesanan.text = order.tipe_pesanan
+        tvOrderTime.text = formatWaktu(order.waktu_order) // Pake helper format // Kita tampilkan tipe pesanan di sini
         tvTotalPrice.text = formatter.format(order.total_harga)
+
 
         // Set Status Bayar
         tvStatusBayar.text = order.status_pembayaran
         when (order.status_pembayaran) {
             "LUNAS" -> tvStatusBayar.setBackgroundColor(Color.parseColor("#C8E6C9"))
             "BELUM_BAYAR" -> tvStatusBayar.setBackgroundColor(Color.parseColor("#FFCDD2"))
+            "BATAL" -> tvStatusBayar.setBackgroundColor(Color.parseColor("#BDBDBD"))
             else -> tvStatusBayar.setBackgroundColor(Color.parseColor("#FFECB3"))
         }
 
         // Set Status Pesanan
         tvStatusPesanan.text = order.status_pesanan
+        if (order.status_pembayaran == "BATAL" && !order.keterangan_batal.isNullOrBlank()) {
+            layoutAlasanBatal.visibility = View.VISIBLE
+            tvKeteranganBatal.text = order.keterangan_batal
+        } else {
+            layoutAlasanBatal.visibility = View.GONE
+        }
+
+        // 2. Tampilkan Catatan Pelanggan
+        if (!order.catatan_pelanggan.isNullOrBlank()) {
+            layoutCatatanPelanggan.visibility = View.VISIBLE
+            tvCustomerNote.text = order.catatan_pelanggan
+        } else {
+            layoutCatatanPelanggan.visibility = View.GONE
+        }
         when (order.status_pesanan) {
             "SELESAI" -> tvStatusPesanan.setBackgroundColor(Color.parseColor("#B2EBF2"))
             "SIAP_DIAMBIL" -> tvStatusPesanan.setBackgroundColor(Color.parseColor("#C8E6C9"))
@@ -222,6 +278,32 @@ class OrderDetailActivity : AppCompatActivity() {
 
         // Ambil data pembayaran pertama (asumsi cuma 1)
         val paymentInfo = order.pembayaran?.firstOrNull()
+        if (paymentInfo != null) {
+            tvPaymentMethod.text = paymentInfo.metodepembayaran?.nama_metode ?: "N/A"
+            tvPaymentTime.text = formatWaktu(paymentInfo.waktu_bayar) // Format waktunya
+
+            val metodeId = paymentInfo.metodepembayaran?.id
+            // Tampilkan tombol HANYA kalo QRIS (1) atau Transfer (2)
+            if (metodeId == 1 || metodeId == 2) {
+                layoutBuktiBayar.visibility = View.VISIBLE
+                currentBuktiUrl = paymentInfo.bukti_pembayaran_url
+
+                if (!currentBuktiUrl.isNullOrEmpty()) {
+                    btnLihatBukti.visibility = View.VISIBLE
+                } else {
+                    btnLihatBukti.visibility = View.GONE
+                    imgBuktiPreview.visibility = View.GONE
+                }
+            } else {
+                // Sembunyiin kalo metodenya "Cash" (ID 3)
+                layoutBuktiBayar.visibility = View.GONE
+            }
+        } else {
+            // Kalo data pembayaran null (harusnya nggak mungkin kalo udah bayar)
+            tvPaymentMethod.text = "N/A"
+            tvPaymentTime.text = "N/A"
+            layoutBuktiBayar.visibility = View.GONE
+        }
         val metodeId = paymentInfo?.metodepembayaran?.id
 
         // Cek apakah metode bayarnya 1 (QRIS) atau 2 (Transfer)
@@ -243,6 +325,22 @@ class OrderDetailActivity : AppCompatActivity() {
         } else {
             // Kalo metodenya 3 (Cash) atau lainnya, sembunyiin semua bagian bukti
             layoutBuktiBayar.visibility = View.GONE
+        }
+    }
+
+    // Helper buat format waktu (COPY-PASTE DARI ORDER ADAPTER)
+    private fun formatWaktu(waktuString: String?): String {
+        if (waktuString.isNullOrBlank()) {
+            return "N/A"
+        }
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+            val outputFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
+            val date = inputFormat.parse(waktuString)
+            outputFormat.format(date)
+        } catch (e: Exception) {
+            waktuString // Kalo gagal format, balikin aslinya
         }
     }
 

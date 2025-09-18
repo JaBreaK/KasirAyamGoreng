@@ -29,7 +29,7 @@
             android:name=".OrderDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".orderlist.OrderListActivity"
+            android:name=".OrderListActivity"
             android:exported="false" />
         <activity
             android:name=".cart.CartActivity"

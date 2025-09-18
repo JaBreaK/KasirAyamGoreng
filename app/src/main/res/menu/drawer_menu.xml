@@ -5,10 +5,6 @@
             android:id="@+id/nav_pos"
             android:icon="@android:drawable/ic_menu_save"
             android:title="Kasir (POS)" />
-        <item
-            android:id="@+id/nav_menu"
-            android:icon="@drawable/shop1"
-            android:title="Daftar Menu" />
 
         <item
             android:id="@+id/nav_orders"

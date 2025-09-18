@@ -11,6 +11,19 @@ data class Order(
     @SerializedName("nama_pelanggan")
     val nama_pelanggan: String?,
 
+    // VVVV TAMBAHIN INI VVVV
+    @SerializedName("nomor_wa")
+    val nomor_wa: String?, // Kita bikin nullable (boleh null)
+    // ^^^^ SAMPE SINI ^^^^
+
+    // VVVV TAMBAHIN 2 INI VVVV
+    @SerializedName("keterangan_batal")
+    val keterangan_batal: String?,
+
+    @SerializedName("catatan_pelanggan")
+    val catatan_pelanggan: String?,
+    // ^^^^ SAMPAI SINI ^^^^
+
     @SerializedName("total_harga")
     val total_harga: Int,
 
@@ -71,7 +84,11 @@ data class PembayaranItem(
     val bukti_pembayaran_url: String?, // <-- INI YANG KITA CARI
 
     @SerializedName("metodepembayaran")
-    val metodepembayaran: MetodeDetail? // Info metode yg dipake
+    val metodepembayaran: MetodeDetail?, // Info metode yg dipake
+    // VVVV TAMBAHIN YANG INI (KEMARIN KETINGGALAN) VVVV
+    @SerializedName("waktu_bayar")
+val waktu_bayar: String?, // Bikin nullable (pake ?) biar aman
+// ^^^^ SAMPE SINI ^^^^
 )
 
 // Info metode di dalem "pembayaran"

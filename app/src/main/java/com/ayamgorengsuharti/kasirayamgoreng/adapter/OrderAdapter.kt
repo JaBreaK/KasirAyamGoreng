@@ -10,7 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ayamgorengsuharti.kasirayamgoreng.R
 import com.ayamgorengsuharti.kasirayamgoreng.models.Order
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.TimeZone
+
 
 class OrderAdapter(
     private var orderList: List<Order>,
@@ -19,6 +22,7 @@ class OrderAdapter(
 
     inner class OrderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvIdCustomer: TextView = itemView.findViewById(R.id.tv_order_id_customer)
+        val tvOrderTime: TextView = itemView.findViewById(R.id.tv_order_time)
         val tvItems: TextView = itemView.findViewById(R.id.tv_order_items)
         val tvTotal: TextView = itemView.findViewById(R.id.tv_order_total)
         val tvStatusBayar: TextView = itemView.findViewById(R.id.tv_order_status_bayar)
@@ -36,6 +40,25 @@ class OrderAdapter(
 
         // Set ID dan Nama
         holder.tvIdCustomer.text = "Order #${order.id} - ${order.nama_pelanggan ?: "N/A"}"
+
+        // VVVV TAMBAHIN BLOK INI VVVV
+        // Format Waktu Order
+        try {
+            // Ini format input dari API (Contoh: 2025-09-14T11:17:49.000Z)
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC") // Penting, karena "Z" itu UTC
+
+            // Ini format output yg kita mau (Contoh: 14 Sep 2025, 11:17)
+            val outputFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
+
+            val date = inputFormat.parse(order.waktu_order) // Ubah String jadi object Date
+            holder.tvOrderTime.text = outputFormat.format(date) // Format ulang
+
+        } catch (e: Exception) {
+            // Kalo gagal format, tampilin aja apa adanya
+            holder.tvOrderTime.text = order.waktu_order
+        }
+        // ^^^^ SAMPAI SINI ^^^^
 
         // Format Total Harga
         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
