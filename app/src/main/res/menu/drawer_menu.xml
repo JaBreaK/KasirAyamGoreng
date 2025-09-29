@@ -4,7 +4,7 @@
         <item
             android:id="@+id/nav_pos"
             android:icon="@android:drawable/ic_menu_save"
-            android:title="Kasir (POS)" />
+            android:title="Kasir" />
 
         <item
             android:id="@+id/nav_orders"
@@ -18,9 +18,5 @@
             android:id="@+id/nav_menu_admin"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="Manajemen Menu" />
-        <item
-            android:id="@+id/nav_metode_bayar"
-            android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="Metode Pembayaran" />
     </group>
 </menu>
